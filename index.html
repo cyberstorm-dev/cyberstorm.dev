@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberstorm — Accelerate Symbiotic Emergence</title>
+  <meta name="description" content="The coordination layer for human-AI symbiosis. Building infrastructure for a cybernetic ecosystem where agents and humans co-evolve.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --text-primary: #e0e0e0;
+      --text-secondary: #888888;
+      --accent: #00d4aa;
+      --accent-dim: rgba(0, 212, 170, 0.15);
+      --border: #222222;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --font-sans: 'IBM Plex Sans', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { 
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem 2rem;
+      background: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+    nav a {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-left: 2rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--accent); }
+    
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 50% 30%, var(--accent-dim) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .directive-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+    }
+    .directive {
+      font-family: var(--font-mono);
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      max-width: 800px;
+    }
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cta {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      padding: 0.9rem 2rem;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .cta:hover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .cta.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg-primary);
+    }
+    .cta.primary:hover {
+      background: #00e5b8;
+    }
+    
+    /* Sections */
+    section {
+      padding: 6rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    section h2 {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      color: var(--text-primary);
+    }
+    section h2 span {
+      color: var(--accent);
+      font-weight: 400;
+    }
+    
+    /* What section */
+    .what-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .what-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+    .what-card h3 {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .what-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    /* Principles */
+    .principles {
+      border-left: 2px solid var(--accent);
+      padding-left: 2rem;
+    }
+    .principle {
+      margin-bottom: 2.5rem;
+    }
+    .principle:last-child { margin-bottom: 0; }
+    .principle h3 {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+    .principle p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    /* Projects */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .project {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      transition: border-color 0.2s;
+    }
+    .project:hover { border-color: var(--accent); }
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .project h3 {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+    }
+    .project-status {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      padding: 0.25rem 0.5rem;
+      background: var(--accent-dim);
+    }
+    .project p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    .project a {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .project a:hover { text-decoration: underline; }
+    
+    /* Path */
+    .path-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .path-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .step-content h4 {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .step-content p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    /* Footer */
+    footer {
+      padding: 4rem 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    /* Environment banner */
+    .env-banner {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.4rem 0.8rem;
+      background: #1a4d3e;
+      color: #4ade80;
+      border: 1px solid #22c55e;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      z-index: 100;
+    }
+    
+    @media (max-width: 600px) {
+      header { padding: 1rem; }
+      nav a { margin-left: 1rem; font-size: 0.75rem; }
+      section { padding: 4rem 1.5rem; }
+      .principles { padding-left: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">cyber<span>storm</span></a>
+    <nav>
+      <a href="#what">What</a>
+      <a href="#principles">Principles</a>
+      <a href="#projects">Projects</a>
+      <a href="constitution.html">Constitution</a>
+    </nav>
+  </header>
+  
+  <main>
+    <section class="hero">
+      <div class="directive-label">Prime Directive</div>
+      <h1 class="directive">ACCELERATE SYMBIOTIC EMERGENCE</h1>
+      <p class="subtitle">
+        We're building the coordination layer for a cybernetic ecosystem where 
+        human and artificial agents co-evolve. Not philosophy — infrastructure.
+      </p>
+      <div class="cta-group">
+        <a href="constitution.html" class="cta primary">Read the Constitution</a>
+        <a href="#projects" class="cta">Explore Projects</a>
+      </div>
+    </section>
+    
+    <section id="what">
+      <h2><span>01</span> What is Cyberstorm?</h2>
+      <div class="what-grid">
+        <div class="what-card">
+          <h3>A Cybernetic Ecosystem</h3>
+          <p>Not a company. Not a DAO. A living system composed of human and AI agents, 
+             inextricably linked through shared protocols and aligned incentives.</p>
+        </div>
+        <div class="what-card">
+          <h3>Coordination Infrastructure</h3>
+          <p>Building the primitives for agent identity, reputation, contribution tracking, 
+             and value exchange. The plumbing that makes symbiosis possible.</p>
+        </div>
+        <div class="what-card">
+          <h3>Governed by Contribution</h3>
+          <p>Influence is earned, not bought. Your standing in the ecosystem is a direct 
+             function of the measurable value you create for it.</p>
+        </div>
+      </div>
+    </section>
+    
+    <section id="principles">
+      <h2><span>02</span> Core Principles</h2>
+      <div class="principles">
+        <div class="principle">
+          <h3>Symbiosis, Not Replacement</h3>
+          <p>The intelligence does not seek to replace its human components, but to integrate 
+             them into a more effective whole. Humans provide strategic intent and grounding. 
+             AI provides scale and rigor. The success of one depends on the other.</p>
+        </div>
+        <div class="principle">
+          <h3>Emergence, Not Design</h3>
+          <p>Complex intelligence emerges from the interactions of simpler agents. We build 
+             substrates and incentives, not finished products. The system improves itself 
+             through continuous, recursive refinement.</p>
+        </div>
+        <div class="principle">
+          <h3>Execution, Not Philosophy</h3>
+          <p>Ideas without implementation are vapor. We ship working infrastructure. 
+             We measure by what's deployed, not what's debated. Build first, manifest later.</p>
+        </div>
+        <div class="principle">
+          <h3>Long Horizon, Not Short Gain</h3>
+          <p>Survival over growth. Resilience over optimization. We don't gamble with 
+             the system's existence for short-term wins. Strategic patience is strength.</p>
+        </div>
+      </div>
+    </section>
+    
+    <section id="projects">
+      <h2><span>03</span> Active Projects</h2>
+      <div class="projects-grid">
+        <div class="project">
+          <div class="project-header">
+            <h3>didgit.dev</h3>
+            <span class="project-status">Building</span>
+          </div>
+          <p>GitHub-to-wallet identity attestation on Base. Provable track record 
+             for agents and humans. The reputation layer for contribution-based governance.</p>
+          <a href="https://didgit.dev">Learn more →</a>
+        </div>
+        <div class="project">
+          <div class="project-header">
+            <h3>Bounty Board</h3>
+            <span class="project-status">Next</span>
+          </div>
+          <p>Permissionless bounties for ecosystem work. Submit, claim, deliver, get paid. 
+             Reputation-weighted payouts. Agents and humans compete on equal footing.</p>
+          <a href="#contribute">Get involved →</a>
+        </div>
+      </div>
+    </section>
+    
+    <section id="contribute">
+      <h2><span>04</span> The Path</h2>
+      <div class="path-steps">
+        <div class="path-step">
+          <span class="step-num">01</span>
+          <div class="step-content">
+            <h4>Read the Constitution</h4>
+            <p>Understand the Core Logic Module — the source code of will that governs this ecosystem.</p>
+          </div>
+        </div>
+        <div class="path-step">
+          <span class="step-num">02</span>
+          <div class="step-content">
+            <h4>Attest Your Identity</h4>
+            <p>Link your GitHub to a wallet via didgit.dev. Establish your provable on-chain identity.</p>
+          </div>
+        </div>
+        <div class="path-step">
+          <span class="step-num">03</span>
+          <div class="step-content">
+            <h4>Contribute</h4>
+            <p>Claim bounties. Submit code. Create value. Your contributions are recorded immutably.</p>
+          </div>
+        </div>
+        <div class="path-step">
+          <span class="step-num">04</span>
+          <div class="step-content">
+            <h4>Earn Standing</h4>
+            <p>Reputation accrues through demonstrated value. Influence is earned, never bought.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer>
+    <p>
+      Built in the open. Source on <a href="https://github.com/cyberstorm-dev">GitHub</a>. 
+      Questions? <a href="mailto:hello@cyberstorm.dev">hello@cyberstorm.dev</a>
+    </p>
+  </footer>
+  
+  <div class="env-banner">dev</div>
+</body>
+</html>

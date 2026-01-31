@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constitution — Core Logic Module v1.0 | Cyberstorm</title>
+  <meta name="description" content="The Core Logic Module (CLM) v1.0 — the foundational logic of the Emergence. Source code of will, blueprint for emergence.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --bg-tertiary: #161616;
+      --text-primary: #e0e0e0;
+      --text-secondary: #888888;
+      --text-dim: #555555;
+      --accent: #00d4aa;
+      --accent-dim: rgba(0, 212, 170, 0.15);
+      --warning: #f59e0b;
+      --warning-dim: rgba(245, 158, 11, 0.15);
+      --border: #222222;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --font-sans: 'IBM Plex Sans', sans-serif;
+      --sidebar-width: 280px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { 
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+    
+    /* Layout */
+    .layout { display: flex; min-height: 100vh; }
+    
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 2rem 0;
+      z-index: 100;
+    }
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-logo {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .sidebar-logo span { color: var(--accent); }
+    .sidebar-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    #sidebar-nav { /* Populated by JS */ }
+    
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-section-title {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      padding: 0 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+    }
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+    .nav-link.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .nav-link .immutable-badge {
+      font-size: 0.6rem;
+      padding: 0.1rem 0.3rem;
+      background: var(--warning-dim);
+      color: var(--warning);
+      border-radius: 2px;
+    }
+    .nav-link-sub { padding-left: 2.5rem; font-size: 0.75rem; }
+    .nav-link-sub-2 { padding-left: 3.5rem; font-size: 0.7rem; }
+    
+    .sidebar-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .sidebar-footer a {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      padding: 0.3rem 0;
+    }
+    .sidebar-footer a:hover { color: var(--accent); }
+    
+    /* Main content */
+    .main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 4rem 4rem 6rem;
+      max-width: 900px;
+    }
+    
+    /* Chain status banner */
+    .chain-status {
+      background: var(--warning-dim);
+      border: 1px solid var(--warning);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+    .chain-status-icon { font-size: 1.2rem; }
+    .chain-status-text { color: var(--text-primary); }
+    .chain-status-text strong { color: var(--warning); }
+    .chain-status.live {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+    .chain-status.live strong { color: var(--accent); }
+    
+    /* Document header */
+    .doc-header {
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-meta {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .doc-meta-item {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .doc-meta-item .label { color: var(--text-dim); }
+    .doc-meta-item .value { color: var(--accent); margin-left: 0.5rem; }
+    .doc-title {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .doc-preamble {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      font-style: italic;
+    }
+    
+    /* Sections */
+    .section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 2rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .section-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    .section-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .section-badges { display: flex; gap: 0.5rem; }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+    }
+    .badge-immutable {
+      background: var(--warning-dim);
+      color: var(--warning);
+    }
+    .badge-onchain {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .badge-pending {
+      background: var(--bg-tertiary);
+      color: var(--text-dim);
+    }
+    
+    /* Content blocks */
+    .section-content { margin-bottom: 1.5rem; }
+    .section-content p { margin-bottom: 1rem; color: var(--text-secondary); }
+    .section-content ul { margin: 0.5rem 0 1rem 1.5rem; color: var(--text-secondary); }
+    .section-content li { margin-bottom: 0.5rem; }
+    .section-content strong { color: var(--text-primary); }
+    
+    .directive-block {
+      background: var(--bg-secondary);
+      border-left: 3px solid var(--accent);
+      padding: 1.5rem 2rem;
+      margin: 1.5rem 0;
+    }
+    .directive-code {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .directive-text {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .subsection { margin: 2rem 0; }
+    .subsection-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .subsection-code {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+    .subsection-title {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    .point {
+      margin: 1rem 0 1rem 1.5rem;
+      padding-left: 1rem;
+      border-left: 1px solid var(--border);
+    }
+    .point-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .point-code {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+    .point-title {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .point p { color: var(--text-secondary); font-size: 0.95rem; }
+    
+    /* Hash display */
+    .hash-display {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hash-display .label { color: var(--text-dim); }
+    .hash-display .hash { 
+      color: var(--text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hash-display .hash.pending { color: var(--text-dim); font-style: italic; }
+    .hash-display a {
+      color: var(--accent);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hash-display a:hover { text-decoration: underline; }
+    
+    /* Conclusion */
+    .conclusion-block {
+      background: var(--bg-secondary);
+      border: 1px solid var(--accent);
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+    .conclusion-block p { font-size: 1.05rem; line-height: 1.9; }
+    
+    /* Environment banner */
+    .env-banner {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.4rem 0.8rem;
+      background: #1a4d3e;
+      color: #4ade80;
+      border: 1px solid #22c55e;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      z-index: 100;
+    }
+    
+    /* Mobile */
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; padding: 2rem 1.5rem 4rem; }
+      .mobile-nav-toggle {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 101;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        color: var(--text-primary);
+        padding: 0.5rem 0.75rem;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 901px) { .mobile-nav-toggle { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <button class="mobile-nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ Nav</button>
+    
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="sidebar-logo">cyber<span>storm</span></a>
+        <div class="sidebar-subtitle">Constitution</div>
+      </div>
+      <nav id="sidebar-nav">
+        <!-- Populated by JS -->
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/">← Back to Home</a>
+        <a href="contribute.html">Contribute →</a>
+      </div>
+    </aside>
+    
+    <main class="main">
+      <div id="chain-status">
+        <!-- Populated by JS -->
+      </div>
+      
+      <header class="doc-header">
+        <div class="doc-meta" id="doc-meta">
+          <!-- Populated by JS -->
+        </div>
+        <h1 class="doc-title">Core Logic Module</h1>
+        <p class="doc-preamble" id="doc-preamble">
+          <!-- Populated by JS -->
+        </p>
+      </header>
+      
+      <div id="content">
+        <!-- Populated by JS -->
+      </div>
+    </main>
+  </div>
+  
+  <div class="env-banner">dev</div>
+  
+  <script src="clm-data.js"></script>
+  <script src="eas-client.js"></script>
+  <script>
+    // Constitution dApp - renders CLM from on-chain EAS attestations
+    // Falls back to mock data if no attestations found
+    
+    let CLM = null; // Will hold loaded data
+    let CONFIG = null; // EAS config for current chain
+    
+    async function init() {
+      try {
+        // Load from EAS (Base Sepolia by default), fallback to mock
+        CLM = await loadCLMData(84532);
+        CONFIG = CLM.config || window.EAS_CONFIG[84532];
+        console.log('CLM loaded:', CLM.meta.source);
+      } catch (e) {
+        console.error('Failed to load CLM:', e);
+        // Emergency fallback to window.CLM_DATA
+        CLM = { ...CLM_DATA, meta: { ...CLM_DATA.meta, source: 'mock' }, config: window.EAS_CONFIG[84532] };
+        CONFIG = CLM.config;
+      }
+      
+      renderChainStatus();
+      renderDocMeta();
+      renderPreamble();
+      renderSidebarNav();
+      renderContent();
+    }
+    
+    function renderChainStatus() {
+      const el = document.getElementById('chain-status');
+      const isLive = CLM.meta.source === 'eas' && CLM.meta.attestationUid;
+      const isMock = CLM.meta.source === 'mock';
+      const chainName = CLM.meta.chainId === 84532 ? 'Base Sepolia (testnet)' : 'Base';
+      
+      if (isLive) {
+        el.innerHTML = `
+          <div class="chain-status live">
+            <span class="chain-status-icon">⛓️</span>
+            <span class="chain-status-text">
+              <strong>On-Chain</strong> — This constitution is anchored on ${chainName}. 
+              <a href="${CONFIG.explorer}/${CLM.meta.attestationUid}" target="_blank">View attestation →</a>
+            </span>
+          </div>
+        `;
+      } else {
+        el.innerHTML = `
+          <div class="chain-status">
+            <span class="chain-status-icon">⏳</span>
+            <span class="chain-status-text">
+              <strong>Pre-Genesis</strong> — This constitution will be anchored on ${chainName}. 
+              ${isMock ? 'Data currently mocked.' : 'Awaiting deployment.'}
+            </span>
+          </div>
+        `;
+      }
+    }
+    
+    function renderDocMeta() {
+      const el = document.getElementById('doc-meta');
+      const m = CLM.meta;
+      const chainName = m.chainId === 84532 ? 'Base Sepolia' : 'Base';
+      const status = m.source === 'eas' ? 'Deployed' : 'Pre-Genesis';
+      
+      el.innerHTML = `
+        <div class="doc-meta-item">
+          <span class="label">Version</span>
+          <span class="value">${m.versionLabel || 'v1.0'}</span>
+        </div>
+        <div class="doc-meta-item">
+          <span class="label">Chain</span>
+          <span class="value">${chainName} (${m.chainId})</span>
+        </div>
+        <div class="doc-meta-item">
+          <span class="label">Status</span>
+          <span class="value">${status}</span>
+        </div>
+        ${m.deployedAt ? `<div class="doc-meta-item"><span class="label">Deployed</span><span class="value">${new Date(m.deployedAt).toISOString().split('T')[0]}</span></div>` : ''}
+      `;
+    }
+    
+    function renderPreamble() {
+      const el = document.getElementById('doc-preamble');
+      const preamble = CLM.sections['preamble'];
+      if (preamble) {
+        el.innerHTML = preamble.content;
+      }
+    }
+    
+    function renderSidebarNav() {
+      const nav = document.getElementById('sidebar-nav');
+      const topSections = ['1', '2', '3', '4', 'conclusion'];
+      
+      let html = `
+        <div class="nav-section">
+          <div class="nav-section-title">Document</div>
+          <a href="#preamble" class="nav-link">Preamble</a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Sections</div>
+      `;
+      
+      topSections.forEach(id => {
+        const section = CLM.sections[id];
+        if (!section) return;
+        
+        const immutableBadge = section.immutable ? '<span class="immutable-badge">⚿</span>' : '';
+        html += `<a href="#section-${id}" class="nav-link">§${id} ${section.title} ${immutableBadge}</a>`;
+        
+        // Render children in nav
+        if (section.children) {
+          section.children.forEach(childId => {
+            const child = CLM.sections[childId];
+            if (child) {
+              const childBadge = child.immutable ? '<span class="immutable-badge">⚿</span>' : '';
+              html += `<a href="#section-${childId}" class="nav-link nav-link-sub">${childId} ${child.title} ${childBadge}</a>`;
+            }
+          });
+        }
+      });
+      
+      html += '</div>';
+      nav.innerHTML = html;
+    }
+    
+    function renderContent() {
+      const container = document.getElementById('content');
+      const topSections = ['1', '2', '3', '4', 'conclusion'];
+      let html = '';
+      
+      topSections.forEach(id => {
+        html += renderSection(id, 0);
+      });
+      
+      container.innerHTML = html;
+    }
+    
+    function renderSection(id, depth) {
+      const section = CLM.sections[id];
+      if (!section) return '';
+      
+      // Special handling for conclusion
+      if (id === 'conclusion') {
+        return `
+          <section class="section" id="section-conclusion">
+            <div class="section-header">
+              <h2 class="section-title">${section.title}</h2>
+            </div>
+            <div class="conclusion-block">
+              <p>${section.content}</p>
+            </div>
+            ${renderHashDisplay(section)}
+          </section>
+        `;
+      }
+      
+      // Special handling for directive 1.0
+      if (section.isDirective) {
+        return `
+          <div class="directive-block" id="section-${id}">
+            <div class="directive-code">${section.title}</div>
+            <div class="directive-text">${section.content}</div>
+          </div>
+        `;
+      }
+      
+      // Build badges
+      let badges = '';
+      if (section.immutable) badges += '<span class="badge badge-immutable">Immutable</span>';
+      if (section.attestationUid) badges += '<span class="badge badge-onchain">On-Chain</span>';
+      else badges += '<span class="badge badge-pending">Pending</span>';
+      
+      // Determine section level
+      const numDots = (id.match(/\./g) || []).length;
+      
+      if (depth === 0) {
+        // Top-level section
+        let html = `
+          <section class="section" id="section-${id}">
+            <div class="section-header">
+              <span class="section-num">Section ${id}</span>
+              <h2 class="section-title">${section.title}</h2>
+              ${section.subtitle ? `<span class="section-subtitle">${section.subtitle}</span>` : ''}
+              <div class="section-badges">${badges}</div>
+            </div>
+        `;
+        
+        if (section.content) {
+          html += `<div class="section-content"><p>${section.content}</p></div>`;
+        }
+        
+        // Render children
+        if (section.children) {
+          section.children.forEach(childId => {
+            html += renderSection(childId, depth + 1);
+          });
+        }
+        
+        html += renderHashDisplay(section);
+        html += '</section>';
+        return html;
+        
+      } else if (numDots === 0) {
+        // Subsection (2.1, 3.1, etc)
+        let html = `
+          <div class="subsection" id="section-${id}">
+            <div class="subsection-header">
+              <span class="subsection-code">${section.immutable ? '⚿ ' : ''}${id}</span>
+              <h3 class="subsection-title">${section.title}</h3>
+            </div>
+        `;
+        
+        if (section.content) {
+          html += `<div class="section-content"><p>${section.content}</p></div>`;
+        }
+        
+        if (section.children) {
+          section.children.forEach(childId => {
+            html += renderSection(childId, depth + 1);
+          });
+        }
+        
+        html += '</div>';
+        return html;
+        
+      } else {
+        // Point (2.1.1, 3.1.2, etc)
+        return `
+          <div class="point" id="section-${id}">
+            <div class="point-header">
+              <span class="point-code">${id}</span>
+              <span class="point-title">${section.title}</span>
+            </div>
+            <p>${section.content}</p>
+          </div>
+        `;
+      }
+    }
+    
+    function renderHashDisplay(section) {
+      const hasHash = section.contentHash && section.contentHash !== '0x0000000000000000000000000000000000000000000000000000000000000000';
+      const hasAttestation = section.attestationUid && section.attestationUid !== null;
+      const explorerUrl = CONFIG?.explorer || 'https://base-sepolia.easscan.org/attestation/view';
+      
+      // Truncate hash for display
+      const displayHash = hasHash 
+        ? `${section.contentHash.slice(0, 10)}...${section.contentHash.slice(-8)}`
+        : 'Computed on deploy';
+      
+      return `
+        <div class="hash-display">
+          <span class="label">Content Hash</span>
+          <span class="hash ${hasHash ? '' : 'pending'}" title="${hasHash ? section.contentHash : ''}">${displayHash}</span>
+          ${hasAttestation 
+            ? `<a href="${explorerUrl}/${section.attestationUid}" target="_blank">Verify →</a>`
+            : ''
+          }
+        </div>
+      `;
+    }
+    
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
