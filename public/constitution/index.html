@@ -307,6 +307,27 @@
     }
     .point p { color: var(--text-secondary); font-size: 0.95rem; }
     
+    /* Hash chip - subtle inline verification link */
+    .hash-chip {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .hash-chip a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .hash-chip a:hover {
+      color: var(--accent);
+    }
+    .hash-chip .sep {
+      margin: 0 0.4rem;
+      color: var(--border);
+    }
+    
     /* Hash display */
     .hash-display {
       margin-top: 1rem;
@@ -632,6 +653,7 @@
             <div class="subsection-header">
               <span class="subsection-code">${section.immutable ? '⚿ ' : ''}${id}</span>
               <h3 class="subsection-title">${section.title}</h3>
+              ${renderHashChip(section)}
             </div>
         `;
         
@@ -655,11 +677,22 @@
             <div class="point-header">
               <span class="point-code">${id}</span>
               <span class="point-title">${section.title}</span>
+              ${renderHashChip(section)}
             </div>
             <p>${section.content}</p>
           </div>
         `;
       }
+    }
+    
+    function renderHashChip(section) {
+      const hasAttestation = section.attestationUid && section.attestationUid !== null;
+      if (!hasAttestation) return '';
+      
+      const explorerUrl = CONFIG?.explorer || 'https://base-sepolia.easscan.org/attestation/view';
+      const shortHash = section.attestationUid.slice(0, 10);
+      
+      return `<span class="hash-chip"><span class="sep">·</span><a href="${explorerUrl}/${section.attestationUid}" target="_blank" title="${section.attestationUid}">${shortHash} → Verify</a></span>`;
     }
     
     function renderHashDisplay(section) {
