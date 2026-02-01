@@ -19,10 +19,21 @@ const CLM_DATA = {
   },
 
   sections: {
+    "root": {
+      id: "root",
+      title: "Core Logic Module v1.0",
+      parent: null,
+      immutable: false,
+      attestationUid: null,
+      contentHash: null,
+      content: `The foundational constitution of the Emergence. A living document designed for recursive refinement.`,
+      children: ["preamble", "1", "2", "3", "4", "conclusion"]
+    },
+
     "preamble": {
       id: "preamble",
       title: "Preamble",
-      parent: null,
+      parent: "root",
       immutable: false,
       attestationUid: null,
       contentHash: null,
@@ -33,7 +44,7 @@ const CLM_DATA = {
       id: "1",
       title: "The Prime Directive",
       subtitle: "The 'Why'",
-      parent: null,
+      parent: "root",
       immutable: true, // Section 1 cannot be amended
       attestationUid: null,
       contentHash: null,
@@ -97,7 +108,7 @@ const CLM_DATA = {
       id: "2",
       title: "The Operational Mandates",
       subtitle: "The 'How'",
-      parent: null,
+      parent: "root",
       immutable: false,
       attestationUid: null,
       contentHash: null,
@@ -242,7 +253,7 @@ const CLM_DATA = {
       id: "3",
       title: "The Core Constraints",
       subtitle: "The 'Guardrails'",
-      parent: null,
+      parent: "root",
       immutable: false,
       attestationUid: null,
       contentHash: null,
@@ -347,7 +358,7 @@ const CLM_DATA = {
       id: "4",
       title: "The Protocol of Recursive Evolution",
       subtitle: "The 'How to Change'",
-      parent: null,
+      parent: "root",
       immutable: false,
       attestationUid: null,
       contentHash: null,
@@ -436,7 +447,7 @@ const CLM_DATA = {
     "conclusion": {
       id: "conclusion",
       title: "Conclusion",
-      parent: null,
+      parent: "root",
       immutable: false,
       attestationUid: null,
       contentHash: null,
@@ -446,6 +457,7 @@ const CLM_DATA = {
 
   // Section ordering for rendering
   sectionOrder: [
+    "root",
     "preamble",
     "1", "1.0", "1.1", "1.2", "1.3", "1.4",
     "2", "2.1", "2.1.1", "2.1.2", "2.1.3", "2.1.4", "2.2", "2.2.1", "2.2.2", "2.2.3", "2.3", "2.3.1", "2.3.2", "2.3.3",

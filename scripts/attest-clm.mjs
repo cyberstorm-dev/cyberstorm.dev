@@ -9,7 +9,7 @@
  * Usage: node scripts/attest-clm.mjs [--dry-run]
  */
 
-import { createPublicClient, createWalletClient, http, keccak256, toHex, encodePacked } from 'viem';
+import { createPublicClient, createWalletClient, http, keccak256, toHex, encodeAbiParameters, encodePacked, concat } from 'viem';
 import { baseSepolia } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import fs from 'fs';
@@ -54,13 +54,19 @@ const EAS_ABI = [
 
 // Schema: string sectionId, uint16 version, string title, string content, bytes32 contentHash, bytes32 parent, bool immutable, bytes32 groupKeyId
 function encodeAttestationData(section, parentUid, contentHash) {
-  // ABI encode the schema fields
-  const abiCoder = new TextEncoder();
-  
-  // Manual ABI encoding for the schema
-  // This is simplified - in production use viem's encodeAbiParameters
-  const data = encodePacked(
-    ['string', 'uint16', 'string', 'string', 'bytes32', 'bytes32', 'bool', 'bytes32'],
+  // Proper ABI encoding for EAS schema
+  // Schema: string sectionId, uint16 version, string title, string content, bytes32 contentHash, bytes32 parent, bool immutable, bytes32 groupKeyId
+  const data = encodeAbiParameters(
+    [
+      { name: 'sectionId', type: 'string' },
+      { name: 'version', type: 'uint16' },
+      { name: 'title', type: 'string' },
+      { name: 'content', type: 'string' },
+      { name: 'contentHash', type: 'bytes32' },
+      { name: 'parent', type: 'bytes32' },
+      { name: 'immutable', type: 'bool' },
+      { name: 'groupKeyId', type: 'bytes32' }
+    ],
     [
       section.id,
       2, // version
@@ -227,7 +233,7 @@ async function main() {
             recipient: '0x0000000000000000000000000000000000000000',
             expirationTime: 0n,
             revocable: true,
-            refUID: ZERO_BYTES32,
+            refUID: parentUid || ZERO_BYTES32,
             data,
             value: 0n
           }
