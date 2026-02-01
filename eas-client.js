@@ -39,7 +39,7 @@ async function loadDeploymentInfo() {
       return DEPLOYMENT_INFO;
     }
   } catch (e) {
-    console.log('No deployment info found, using mock data');
+    // Optional file, silently skip if not found
   }
   return null;
 }
