@@ -87,111 +87,170 @@ function decodeAttestationData(decodedDataJson) {
   }
 }
 
-// Fetch CLM from EAS
-async function fetchCLMFromEAS(chainId = 84532) {
+// Expected leaf sections (deepest level, must have content)
+const EXPECTED_LEAVES = [
+  '1.0', '1.1', '1.2', '1.3', '1.4',
+  '2.1.1', '2.1.2', '2.1.3', '2.1.4',
+  '2.2.1', '2.2.2', '2.2.3',
+  '2.3.1', '2.3.2', '2.3.3',
+  '3.1.1', '3.1.2', '3.2.1', '3.2.2', '3.3.1', '3.3.2',
+  '4.1', '4.2.1', '4.2.2', '4.2.3', '4.2.4',
+  'preamble', 'conclusion'
+];
+
+// Verify all expected leaves are present with content
+function verifyLeaves(sections) {
+  const missing = [];
+  for (const leafId of EXPECTED_LEAVES) {
+    const section = sections[leafId];
+    if (!section) {
+      missing.push(`${leafId} (missing)`);
+    } else if (!section.content && leafId !== 'root') {
+      missing.push(`${leafId} (no content)`);
+    }
+  }
+  return missing;
+}
+
+// Fetch CLM from EAS with retry
+async function fetchCLMFromEAS(chainId = 84532, maxRetries = 3) {
   const config = EAS_CONFIG[chainId];
   if (!config || !config.schemaUid) {
     console.log('No schema UID configured for chain', chainId);
     return null;
   }
 
-  try {
-    const response = await fetch(config.graphql, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: ATTESTATIONS_QUERY,
-        variables: { schemaId: config.schemaUid }
-      })
-    });
+  let lastError = null;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`EAS fetch attempt ${attempt}/${maxRetries}...`);
+      
+      const response = await fetch(config.graphql, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: ATTESTATIONS_QUERY,
+          variables: { schemaId: config.schemaUid }
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`GraphQL request failed: ${response.status}`);
-    }
+      if (!response.ok) {
+        throw new Error(`GraphQL request failed: ${response.status}`);
+      }
 
-    const result = await response.json();
-    if (result.errors) {
-      throw new Error(result.errors[0].message);
-    }
+      const result = await response.json();
+      if (result.errors) {
+        throw new Error(result.errors[0].message);
+      }
 
-    const attestations = result.data?.attestations || [];
-    if (attestations.length === 0) {
-      console.log('No attestations found for schema');
-      return null;
-    }
-
-    // Convert attestations to CLM_DATA format
-    const sections = {};
-    const sectionOrder = [];
-    let rootAttestation = null;
-
-    for (const att of attestations) {
-      const decoded = decodeAttestationData(att.decodedDataJson);
-      if (!decoded) continue;
-
-      const sectionId = decoded.sectionId;
-      sections[sectionId] = {
-        id: sectionId,
-        title: decoded.title,
-        content: decoded.content,
-        contentHash: decoded.contentHash,
-        immutable: decoded.immutable,
-        attestationUid: att.id,
-        txHash: att.txid,
-        attester: att.attester,
-        timestamp: att.time,
-        parent: decoded.parent && decoded.parent !== '0x0000000000000000000000000000000000000000000000000000000000000000' 
-          ? decoded.parent : null,
-      };
-      sectionOrder.push(sectionId);
-
-      // Track root (preamble or first section without parent)
-      if (!rootAttestation && (!decoded.parent || decoded.parent === '0x0000000000000000000000000000000000000000000000000000000000000000')) {
-        rootAttestation = att;
+      const attestations = result.data?.attestations || [];
+      if (attestations.length === 0) {
+        console.log('No attestations found for schema');
+        return null;
+      }
+      
+      // Process attestations
+      const processed = processAttestations(attestations, config);
+      
+      // Verify all leaves present
+      const missing = verifyLeaves(processed.sections);
+      if (missing.length === 0) {
+        console.log(`EAS fetch successful: ${Object.keys(processed.sections).length} sections`);
+        return processed;
+      }
+      
+      console.warn(`Attempt ${attempt}: Missing sections:`, missing.slice(0, 5).join(', '));
+      lastError = new Error(`Incomplete data: ${missing.length} sections missing`);
+      
+      // Wait before retry (exponential backoff)
+      if (attempt < maxRetries) {
+        await new Promise(r => setTimeout(r, 500 * attempt));
+      }
+    } catch (e) {
+      console.error(`Attempt ${attempt} failed:`, e.message);
+      lastError = e;
+      if (attempt < maxRetries) {
+        await new Promise(r => setTimeout(r, 500 * attempt));
       }
     }
-
-    // Resolve parent relationships (UID -> sectionId)
-    const uidToSection = {};
-    for (const [id, section] of Object.entries(sections)) {
-      uidToSection[section.attestationUid] = id;
-    }
-    for (const section of Object.values(sections)) {
-      if (section.parent && uidToSection[section.parent]) {
-        section.parent = uidToSection[section.parent];
-      } else {
-        section.parent = null;
-      }
-    }
-
-    // Build children arrays
-    for (const section of Object.values(sections)) {
-      if (section.parent && sections[section.parent]) {
-        if (!sections[section.parent].children) {
-          sections[section.parent].children = [];
-        }
-        sections[section.parent].children.push(section.id);
-      }
-    }
-
-    return {
-      meta: {
-        version: 1,
-        versionLabel: 'v1.0 Genesis',
-        chainId,
-        schemaUid: config.schemaUid,
-        attestationUid: rootAttestation?.id,
-        deployedAt: rootAttestation ? new Date(rootAttestation.time * 1000).toISOString() : null,
-        source: 'eas',
-      },
-      sections,
-      sectionOrder,
-      config, // Include EAS config for links
-    };
-  } catch (e) {
-    console.error('Failed to fetch from EAS:', e);
-    return null;
   }
+  
+  console.error('All EAS fetch attempts failed:', lastError?.message);
+  return null;
+}
+
+// Process attestations into CLM format
+function processAttestations(attestations, config) {
+
+  // Convert attestations to CLM_DATA format
+  const sections = {};
+  const sectionOrder = [];
+  let rootAttestation = null;
+
+  for (const att of attestations) {
+    const decoded = decodeAttestationData(att.decodedDataJson);
+    if (!decoded) continue;
+
+    const sectionId = decoded.sectionId;
+    sections[sectionId] = {
+      id: sectionId,
+      title: decoded.title,
+      content: decoded.content,
+      contentHash: decoded.contentHash,
+      immutable: decoded.immutable,
+      attestationUid: att.id,
+      txHash: att.txid,
+      attester: att.attester,
+      timestamp: att.time,
+      parent: decoded.parent && decoded.parent !== '0x0000000000000000000000000000000000000000000000000000000000000000' 
+        ? decoded.parent : null,
+    };
+    sectionOrder.push(sectionId);
+
+    // Track root (preamble or first section without parent)
+    if (!rootAttestation && (!decoded.parent || decoded.parent === '0x0000000000000000000000000000000000000000000000000000000000000000')) {
+      rootAttestation = att;
+    }
+  }
+
+  // Resolve parent relationships (UID -> sectionId)
+  const uidToSection = {};
+  for (const [id, section] of Object.entries(sections)) {
+    uidToSection[section.attestationUid] = id;
+  }
+  for (const section of Object.values(sections)) {
+    if (section.parent && uidToSection[section.parent]) {
+      section.parent = uidToSection[section.parent];
+    } else {
+      section.parent = null;
+    }
+  }
+
+  // Build children arrays
+  for (const section of Object.values(sections)) {
+    if (section.parent && sections[section.parent]) {
+      if (!sections[section.parent].children) {
+        sections[section.parent].children = [];
+      }
+      sections[section.parent].children.push(section.id);
+    }
+  }
+
+  return {
+    meta: {
+      version: 1,
+      versionLabel: 'v1.0 Genesis',
+      chainId: config.chainId || 84532,
+      schemaUid: config.schemaUid,
+      attestationUid: rootAttestation?.id,
+      deployedAt: rootAttestation ? new Date(rootAttestation.time * 1000).toISOString() : null,
+      source: 'eas',
+    },
+    sections,
+    sectionOrder,
+    config,
+  };
 }
 
 // Main loader - tries EAS first, falls back to mock
