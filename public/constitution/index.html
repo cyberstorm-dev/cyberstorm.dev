@@ -591,11 +591,11 @@
           <section class="section" id="section-conclusion">
             <div class="section-header">
               <h2 class="section-title">${section.title}</h2>
+              ${renderHashChip(section)}
             </div>
             <div class="conclusion-block">
               <p>${section.content}</p>
             </div>
-            ${renderHashDisplay(section)}
           </section>
         `;
       }
@@ -628,6 +628,7 @@
               <h2 class="section-title">${section.title}</h2>
               ${section.subtitle ? `<span class="section-subtitle">${section.subtitle}</span>` : ''}
               <div class="section-badges">${badges}</div>
+              ${renderHashChip(section)}
             </div>
         `;
         
@@ -642,7 +643,6 @@
           });
         }
         
-        html += renderHashDisplay(section);
         html += '</section>';
         return html;
         
