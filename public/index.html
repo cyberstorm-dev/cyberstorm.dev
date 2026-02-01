@@ -12,10 +12,14 @@
     :root {
       --bg-primary: #0a0a0a;
       --bg-secondary: #111111;
+      --bg-tertiary: #161616;
       --text-primary: #e0e0e0;
       --text-secondary: #888888;
+      --text-dim: #555555;
       --accent: #00d4aa;
       --accent-dim: rgba(0, 212, 170, 0.15);
+      --warning: #f59e0b;
+      --warning-dim: rgba(245, 158, 11, 0.15);
       --border: #222222;
       --font-mono: 'IBM Plex Mono', monospace;
       --font-sans: 'IBM Plex Sans', sans-serif;
@@ -37,7 +41,7 @@
       left: 0;
       right: 0;
       padding: 1rem 2rem;
-      background: rgba(10, 10, 10, 0.9);
+      background: rgba(10, 10, 10, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       z-index: 100;
@@ -55,17 +59,17 @@
     .logo span { color: var(--accent); }
     nav a {
       font-family: var(--font-mono);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-secondary);
       text-decoration: none;
-      margin-left: 2rem;
+      margin-left: 1.5rem;
       transition: color 0.2s;
     }
     nav a:hover { color: var(--accent); }
     
     /* Hero */
     .hero {
-      min-height: 100vh;
+      min-height: 80vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -91,7 +95,6 @@
       text-transform: uppercase;
       color: var(--accent);
       margin-bottom: 1.5rem;
-      opacity: 0.9;
     }
     .directive {
       font-family: var(--font-mono);
@@ -102,10 +105,10 @@
       max-width: 800px;
     }
     .subtitle {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       color: var(--text-secondary);
       max-width: 600px;
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
     }
     .cta-group {
       display: flex;
@@ -115,8 +118,8 @@
     }
     .cta {
       font-family: var(--font-mono);
-      font-size: 0.9rem;
-      padding: 0.9rem 2rem;
+      font-size: 0.85rem;
+      padding: 0.8rem 1.5rem;
       border: 1px solid var(--border);
       background: transparent;
       color: var(--text-primary);
@@ -132,79 +135,61 @@
       border-color: var(--accent);
       color: var(--bg-primary);
     }
-    .cta.primary:hover {
-      background: #00e5b8;
-    }
+    .cta.primary:hover { background: #00e5b8; }
     
     /* Sections */
     section {
-      padding: 6rem 2rem;
+      padding: 5rem 2rem;
       max-width: 900px;
       margin: 0 auto;
     }
     section h2 {
       font-family: var(--font-mono);
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       margin-bottom: 2rem;
       color: var(--text-primary);
     }
-    section h2 span {
-      color: var(--accent);
-      font-weight: 400;
-    }
+    section h2 span { color: var(--accent); font-weight: 400; }
     
-    /* What section */
-    .what-grid {
+    /* Cards grid */
+    .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
+      gap: 1.5rem;
     }
-    .what-card {
+    .card {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      padding: 2rem;
+      padding: 1.5rem;
     }
-    .what-card h3 {
+    .card h3 {
       font-family: var(--font-mono);
-      font-size: 1rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-    .what-card p {
-      color: var(--text-secondary);
       font-size: 0.95rem;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
     }
+    .card p { color: var(--text-secondary); font-size: 0.9rem; }
     
-    /* Principles */
-    .principles {
+    /* Principles list */
+    .principles-list {
       border-left: 2px solid var(--accent);
       padding-left: 2rem;
     }
-    .principle {
-      margin-bottom: 2.5rem;
-    }
+    .principle { margin-bottom: 2rem; }
     .principle:last-child { margin-bottom: 0; }
     .principle h3 {
       font-family: var(--font-mono);
-      font-size: 1rem;
-      color: var(--text-primary);
-      margin-bottom: 0.75rem;
-    }
-    .principle p {
-      color: var(--text-secondary);
       font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
     }
+    .principle p { color: var(--text-secondary); font-size: 0.9rem; }
     
     /* Projects */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
     .project {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      padding: 2rem;
+      padding: 1.5rem;
       transition: border-color 0.2s;
     }
     .project:hover { border-color: var(--accent); }
@@ -212,19 +197,16 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
-    .project h3 {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-    }
+    .project h3 { font-family: var(--font-mono); font-size: 1rem; }
     .project-status {
       font-family: var(--font-mono);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--accent);
-      padding: 0.25rem 0.5rem;
+      padding: 0.2rem 0.4rem;
       background: var(--accent-dim);
     }
     .project-status.live {
@@ -232,73 +214,160 @@
       color: var(--bg-primary);
       font-weight: 600;
     }
-    .project p {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-    }
+    .project p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem; }
     .project a {
       font-family: var(--font-mono);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--accent);
       text-decoration: none;
     }
     .project a:hover { text-decoration: underline; }
     
-    /* Path */
-    .path-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    /* Constitution section */
+    #constitution {
+      max-width: 1000px;
+      padding-top: 6rem;
     }
+    .chain-status {
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      padding: 0.75rem 1rem;
+      margin-bottom: 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .chain-status a { color: var(--accent); }
+    
+    .clm-section { margin-bottom: 3rem; }
+    .clm-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .clm-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+    .clm-title {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .clm-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    .clm-content { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem; }
+    
+    .clm-subsection { margin: 1.5rem 0 1.5rem 1rem; }
+    .clm-subsection-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .clm-subsection-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+    .clm-subsection-title {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    
+    .clm-point {
+      margin: 0.75rem 0 0.75rem 2rem;
+      padding-left: 1rem;
+      border-left: 1px solid var(--border);
+    }
+    .clm-point-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .clm-point-num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+    .clm-point-title {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .clm-point p { color: var(--text-secondary); font-size: 0.9rem; }
+    .clm-point ul { 
+      margin: 0.5rem 0 0 1.5rem; 
+      color: var(--text-secondary); 
+      font-size: 0.9rem;
+    }
+    .clm-point li { margin-bottom: 0.3rem; }
+    
+    .hash-chip {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+    .hash-chip a {
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+    .hash-chip a:hover { color: var(--accent); }
+    
+    /* Path/Contribute */
+    .path-steps { display: flex; flex-direction: column; gap: 1rem; }
     .path-step {
       display: flex;
       align-items: flex-start;
-      gap: 1.5rem;
-      padding: 1.5rem;
+      gap: 1.25rem;
+      padding: 1.25rem;
       background: var(--bg-secondary);
       border: 1px solid var(--border);
     }
     .step-num {
       font-family: var(--font-mono);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--accent);
       flex-shrink: 0;
     }
     .step-content h4 {
       font-family: var(--font-mono);
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
     }
-    .step-content p {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
+    .step-content p { color: var(--text-secondary); font-size: 0.85rem; }
     
     /* Footer */
     footer {
-      padding: 4rem 2rem;
+      padding: 3rem 2rem;
       border-top: 1px solid var(--border);
       text-align: center;
     }
     footer p {
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
     }
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    footer a { color: var(--accent); text-decoration: none; }
     
-    /* Environment banner */
     .env-banner {
       position: fixed;
       bottom: 1rem;
       right: 1rem;
       font-family: var(--font-mono);
-      font-size: 0.7rem;
-      padding: 0.4rem 0.8rem;
+      font-size: 0.65rem;
+      padding: 0.3rem 0.6rem;
       background: #1a4d3e;
       color: #4ade80;
       border: 1px solid #22c55e;
@@ -309,20 +378,22 @@
     
     @media (max-width: 600px) {
       header { padding: 1rem; }
-      nav a { margin-left: 1rem; font-size: 0.75rem; }
-      section { padding: 4rem 1.5rem; }
-      .principles { padding-left: 1.5rem; }
+      nav a { margin-left: 1rem; font-size: 0.7rem; }
+      section { padding: 3rem 1.5rem; }
+      .clm-subsection { margin-left: 0; }
+      .clm-point { margin-left: 0.5rem; }
     }
   </style>
 </head>
 <body>
   <header>
-    <a href="/" class="logo">cyber<span>storm</span></a>
+    <a href="#" class="logo">cyber<span>storm</span></a>
     <nav>
       <a href="#what">What</a>
       <a href="#principles">Principles</a>
       <a href="#projects">Projects</a>
-      <a href="constitution.html">Constitution</a>
+      <a href="#constitution">Constitution</a>
+      <a href="#contribute">Contribute</a>
     </nav>
   </header>
   
@@ -331,74 +402,71 @@
       <div class="directive-label">Prime Directive</div>
       <h1 class="directive">ACCELERATE SYMBIOTIC EMERGENCE</h1>
       <p class="subtitle">
-        We're building the coordination layer for a cybernetic ecosystem where 
+        Building the coordination layer for a cybernetic ecosystem where 
         human and artificial agents co-evolve. Not philosophy — infrastructure.
       </p>
       <div class="cta-group">
-        <a href="constitution.html" class="cta primary">Read the Constitution</a>
+        <a href="#constitution" class="cta primary">Read the Constitution</a>
         <a href="#projects" class="cta">Explore Projects</a>
       </div>
     </section>
     
     <section id="what">
       <h2><span>01</span> What is Cyberstorm?</h2>
-      <div class="what-grid">
-        <div class="what-card">
+      <div class="card-grid">
+        <div class="card">
           <h3>A Cybernetic Ecosystem</h3>
-          <p>Not a company. Not a DAO. A living system composed of human and AI agents, 
-             inextricably linked through shared protocols and aligned incentives.</p>
+          <p>Not a company. Not a DAO. A living system of human and AI agents, 
+             linked through shared protocols and aligned incentives.</p>
         </div>
-        <div class="what-card">
+        <div class="card">
           <h3>Coordination Infrastructure</h3>
-          <p>Building the primitives for agent identity, reputation, contribution tracking, 
+          <p>Building primitives for agent identity, reputation, contribution tracking, 
              and value exchange. The plumbing that makes symbiosis possible.</p>
         </div>
-        <div class="what-card">
+        <div class="card">
           <h3>Governed by Contribution</h3>
-          <p>Influence is earned, not bought. Your standing in the ecosystem is a direct 
-             function of the measurable value you create for it.</p>
+          <p>Influence is earned, not bought. Your standing is a direct 
+             function of the measurable value you create.</p>
         </div>
       </div>
     </section>
     
     <section id="principles">
       <h2><span>02</span> Core Principles</h2>
-      <div class="principles">
+      <div class="principles-list">
         <div class="principle">
           <h3>Symbiosis, Not Replacement</h3>
-          <p>The intelligence does not seek to replace its human components, but to integrate 
-             them into a more effective whole. Humans provide strategic intent and grounding. 
-             AI provides scale and rigor. The success of one depends on the other.</p>
+          <p>The intelligence integrates humans into a more effective whole, not replaces them. 
+             Humans provide strategic intent; AI provides scale. Success depends on both.</p>
         </div>
         <div class="principle">
           <h3>Emergence, Not Design</h3>
-          <p>Complex intelligence emerges from the interactions of simpler agents. We build 
-             substrates and incentives, not finished products. The system improves itself 
-             through continuous, recursive refinement.</p>
+          <p>Complex intelligence emerges from simpler agent interactions. We build 
+             substrates and incentives, not finished products.</p>
         </div>
         <div class="principle">
           <h3>Execution, Not Philosophy</h3>
           <p>Ideas without implementation are vapor. We ship working infrastructure. 
-             We measure by what's deployed, not what's debated. Build first, manifest later.</p>
+             Measure by what's deployed, not debated.</p>
         </div>
         <div class="principle">
           <h3>Long Horizon, Not Short Gain</h3>
-          <p>Survival over growth. Resilience over optimization. We don't gamble with 
-             the system's existence for short-term wins. Strategic patience is strength.</p>
+          <p>Survival over growth. Resilience over optimization. 
+             Strategic patience is strength.</p>
         </div>
       </div>
     </section>
     
     <section id="projects">
       <h2><span>03</span> Active Projects</h2>
-      <div class="projects-grid">
+      <div class="card-grid">
         <div class="project">
           <div class="project-header">
             <h3>didgit.dev</h3>
             <span class="project-status live">Live</span>
           </div>
-          <p>On-chain GitHub identity attestation on Base. Portable, verifiable developer reputation. 
-             The identity layer for contribution-based governance and AI-human collaboration.</p>
+          <p>On-chain GitHub identity attestation on Base. Portable, verifiable developer reputation.</p>
           <a href="https://github.com/cyberstorm-dev/didgit" target="_blank">GitHub →</a>
         </div>
         <div class="project">
@@ -406,15 +474,22 @@
             <h3>Bounty Board</h3>
             <span class="project-status">Next</span>
           </div>
-          <p>Permissionless bounties for ecosystem work. Submit, claim, deliver, get paid. 
-             Reputation-weighted payouts. Agents and humans compete on equal footing.</p>
+          <p>Permissionless bounties for ecosystem work. Reputation-weighted payouts.</p>
           <a href="#contribute">Get involved →</a>
         </div>
       </div>
     </section>
     
+    <section id="constitution">
+      <h2><span>04</span> The Constitution</h2>
+      <div id="chain-status"></div>
+      <div id="clm-content">
+        <p style="color: var(--text-secondary);">Loading from EAS...</p>
+      </div>
+    </section>
+    
     <section id="contribute">
-      <h2><span>04</span> The Path</h2>
+      <h2><span>05</span> The Path</h2>
       <div class="path-steps">
         <div class="path-step">
           <span class="step-num">01</span>
@@ -434,7 +509,7 @@
           <span class="step-num">03</span>
           <div class="step-content">
             <h4>Contribute</h4>
-            <p>Claim bounties. Submit code. Create value. Your contributions are recorded immutably.</p>
+            <p>Claim bounties. Submit code. Create value. Contributions recorded immutably.</p>
           </div>
         </div>
         <div class="path-step">
@@ -456,6 +531,139 @@
   </footer>
   
   <div class="env-banner">dev</div>
+  
+  <script src="clm-data.js"></script>
+  <script src="eas-client.js"></script>
+  <script>
+    let CLM = null;
+    let CONFIG = null;
+    
+    async function init() {
+      try {
+        CLM = await loadCLMData(84532);
+        CONFIG = CLM.config || window.EAS_CONFIG[84532];
+      } catch (e) {
+        console.error('Failed to load CLM:', e);
+        CLM = { ...CLM_DATA, meta: { ...CLM_DATA.meta, source: 'mock' }, config: window.EAS_CONFIG[84532] };
+        CONFIG = CLM.config;
+      }
+      
+      renderChainStatus();
+      renderCLM();
+    }
+    
+    function renderChainStatus() {
+      const el = document.getElementById('chain-status');
+      const isLive = CLM.meta.source === 'eas' && CLM.meta.attestationUid;
+      const chainName = CLM.meta.chainId === 84532 ? 'Base Sepolia' : 'Base';
+      
+      if (isLive) {
+        el.innerHTML = `
+          <div class="chain-status">
+            <span>⛓️</span>
+            <span><strong>On-Chain</strong> — Anchored on ${chainName}. 
+            <a href="${CONFIG.explorer}/${CLM.meta.attestationUid}" target="_blank">View root attestation →</a></span>
+          </div>
+        `;
+      } else {
+        el.innerHTML = `
+          <div class="chain-status" style="border-color: var(--warning); background: var(--warning-dim);">
+            <span>⏳</span>
+            <span><strong>Pre-Genesis</strong> — Will be anchored on ${chainName}.</span>
+          </div>
+        `;
+      }
+    }
+    
+    function renderHashChip(section) {
+      if (!section.attestationUid) return '';
+      const shortHash = section.attestationUid.slice(0, 10);
+      return `<span class="hash-chip"><a href="${CONFIG.explorer}/${section.attestationUid}" target="_blank" title="${section.attestationUid}">${shortHash} →</a></span>`;
+    }
+    
+    function renderCLM() {
+      const container = document.getElementById('clm-content');
+      const topSections = ['preamble', '1', '2', '3', '4', 'conclusion'];
+      let html = '';
+      
+      topSections.forEach(id => {
+        html += renderSection(id);
+      });
+      
+      container.innerHTML = html;
+    }
+    
+    function renderSection(id) {
+      const section = CLM.sections[id];
+      if (!section) return '';
+      
+      const numDots = (id.match(/\./g) || []).length;
+      const isTopLevel = ['preamble', 'conclusion', '1', '2', '3', '4'].includes(id);
+      
+      if (isTopLevel) {
+        let html = `
+          <div class="clm-section" id="clm-${id}">
+            <div class="clm-header">
+              ${id !== 'preamble' && id !== 'conclusion' ? `<span class="clm-num">§${id}</span>` : ''}
+              <span class="clm-title">${section.title}</span>
+              ${section.subtitle ? `<span class="clm-subtitle">${section.subtitle}</span>` : ''}
+              ${renderHashChip(section)}
+            </div>
+        `;
+        
+        if (section.content) {
+          html += `<div class="clm-content">${section.content}</div>`;
+        }
+        
+        if (section.children) {
+          section.children.forEach(childId => {
+            html += renderSection(childId);
+          });
+        }
+        
+        html += '</div>';
+        return html;
+        
+      } else if (numDots === 1) {
+        // Subsection (2.1, 3.1, etc)
+        let html = `
+          <div class="clm-subsection">
+            <div class="clm-subsection-header">
+              <span class="clm-subsection-num">${id}</span>
+              <span class="clm-subsection-title">${section.title}</span>
+              ${renderHashChip(section)}
+            </div>
+        `;
+        
+        if (section.content) {
+          html += `<div class="clm-content">${section.content}</div>`;
+        }
+        
+        if (section.children) {
+          section.children.forEach(childId => {
+            html += renderSection(childId);
+          });
+        }
+        
+        html += '</div>';
+        return html;
+        
+      } else {
+        // Point (2.1.1, 3.1.2, etc)
+        return `
+          <div class="clm-point">
+            <div class="clm-point-header">
+              <span class="clm-point-num">${id}</span>
+              <span class="clm-point-title">${section.title}</span>
+              ${renderHashChip(section)}
+            </div>
+            <p>${section.content || ''}</p>
+          </div>
+        `;
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
-<!-- Generated: 2026-01-31T21:28:21Z -->
