@@ -1,3 +1,10 @@
--e node_modules/
+node_modules/
+*.db
+*.sqlite
+*.sqlite3
+.env
 .DS_Store
+dist/
+build/
+.next/
 *.log
